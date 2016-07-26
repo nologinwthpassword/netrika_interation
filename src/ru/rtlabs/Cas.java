@@ -34,7 +34,7 @@ public class Cas {
 
 
     public String getResponce() throws IOException {
-        URL url = new URL("https://test75.is-mis.ru/cas/login?service");
+        URL url = new URL("https://03.r-mis.ru");
         Map<String,String> params = new LinkedHashMap<>();
         params.put("mac", "");
         params.put("username", "admin");
