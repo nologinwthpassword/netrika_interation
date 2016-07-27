@@ -35,6 +35,7 @@ public SoapSender(String webUid){
         }
     this.webUid = webUid;
     }
+
 public void parse(DBWorker connection){
     try {
         PreparedStatement preparedStatement = connection.getConnection().prepareStatement(this.caseSearch);

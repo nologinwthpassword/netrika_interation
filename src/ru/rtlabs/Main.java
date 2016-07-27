@@ -12,6 +12,7 @@ public class Main {
        WebSession webSession = new WebSession();
         webSession.getUid(connection);
         SoapSender sender = new SoapSender(webSession.getWebSessionUid());
+        sender.parse(connection);
 
     }
 }
