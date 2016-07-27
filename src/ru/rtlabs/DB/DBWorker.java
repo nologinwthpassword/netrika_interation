@@ -30,16 +30,12 @@ public class DBWorker {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         try {
-
             Class.forName("org.postgresql.Driver");
-
-        } catch (ClassNotFoundException e) {
+        }catch (ClassNotFoundException e) {
 
             System.out.println("Не удалось подключить драйвер JDBC Driver");
             return;
-
         }
         System.out.println("PostgreSQL JDBC Driver!");
 
