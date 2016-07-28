@@ -12,7 +12,6 @@ public class DBWorker {
     private  String URL;
     private  String USERNAME;
     private  String PASSWORD;
-
     private Connection connection;
 
     public DBWorker(){
@@ -33,7 +32,6 @@ public class DBWorker {
         try {
             Class.forName("org.postgresql.Driver");
         }catch (ClassNotFoundException e) {
-
             System.out.println("Не удалось подключить драйвер JDBC Driver");
             return;
         }
@@ -41,15 +39,10 @@ public class DBWorker {
 
         this.connection = null;
         try {
-
             connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-
         } catch (SQLException e) {
-
             System.out.println("Не удалось подключиться. Проверьте URL, USERNAME, PASSWORD");
-
         }
-
         if (connection != null) {
             System.out.println("Подключение удалось");
             System.out.println(URL);
@@ -57,7 +50,6 @@ public class DBWorker {
             System.out.println("Не удалось подключиться.");
         }
     }
-
 
     public Connection getConnection() {
         return connection;

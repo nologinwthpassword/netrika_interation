@@ -11,7 +11,6 @@ public class Main {
     public static void main(String[] args) throws IOException {
 
         DBWorker connection = new DBWorker();
-
         WebSession webSession = new WebSession();
         webSession.getUid(connection);
         try {
@@ -23,6 +22,11 @@ public class Main {
         DBWorker2 connection2 = new DBWorker2();
         SoapSender sender = new SoapSender(webSession.getWebSessionUid());
         sender.parse(connection2);
+        try {
+            connection2.getConnection().close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
     }
 }
