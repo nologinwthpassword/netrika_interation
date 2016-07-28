@@ -46,11 +46,50 @@ public void parse(DBWorker2 connection){
             String lpuname = lpuSearch(resultSet.getInt(2), connection);
             sendRequestPatient(SoapBuild.patientSoapBuild(resultSet.getString(5), lpuname , this.guid));
             sendRequestCase(SoapBuild.caseSoapBuild(String.valueOf(resultSet.getInt(1)), lpuname, this.guid));
+            System.out.println("Отправлен на Нетрику пациент: " + resultSet.getInt(3) + " c uid: " + resultSet.getString(5) + " случай case_id: " + resultSet.getInt(1));
+            logInsert(resultSet.getInt(3), resultSet.getString(5), resultSet.getInt(1), connection);
         }
     } catch (SQLException | IOException e) {
         e.printStackTrace();
     }
 }
+    private void sendRequestPatient(String soap) throws IOException {
+        URL url = new URL(wsdlUrl);
+        HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+        conn.setRequestMethod("POST");
+        conn.setRequestProperty("Content-Type", "text/xml; charset=utf-8");
+        conn.setRequestProperty("SOAPAction", this.nameSpacePatientSend);
+        conn.setRequestProperty("Cookie", this.webUid);
+        OutputStream reqStream = conn.getOutputStream();
+        reqStream.write(soap.getBytes());
+
+    }
+    private void sendRequestCase(String soap) throws IOException {
+        URL url = new URL(wsdlUrl);
+        HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+        conn.setRequestMethod("POST");
+        conn.setRequestProperty("Content-Type", "text/xml; charset=utf-8");
+        conn.setRequestProperty("SOAPAction", this.nameSpaceCaseSend);
+        conn.setRequestProperty("Cookie", this.webUid);
+        OutputStream reqStream = conn.getOutputStream();
+        reqStream.write(soap.getBytes());
+    }
+
+    private void logInsert(Integer patientId, String patientUID, Integer caseId, DBWorker2 connection){
+        String sql = "INSERT INTO supp.netrika_log(patient_id, patient_uid, case_id) VALUES (?, ?, ?)";
+        try {
+            PreparedStatement preparedStatement = connection.getConnection().prepareStatement(sql);
+            preparedStatement.setInt(1, patientId);
+            preparedStatement.setString(2, patientUID);
+            preparedStatement.setInt(3, caseId);
+            preparedStatement.execute();
+            System.out.println("Заллогировались данные pateint_id: " + patientId + " patient_uid: " + patientUID + " случай case_id: " + caseId);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     private String lpuSearch(Integer clinicId, DBWorker2 connection){
         String sql = "SELECT netrika_lpu from supp.netrika_lpu where lpu_id = ?";
         String lpu = null;
@@ -65,26 +104,6 @@ public void parse(DBWorker2 connection){
             e.printStackTrace();
         }
         return lpu;
-    }
-    private void sendRequestPatient(String soap) throws IOException {
-        URL url = new URL(wsdlUrl);
-        HttpURLConnection conn = (HttpURLConnection)url.openConnection();
-        conn.setRequestMethod("POST");
-        conn.setRequestProperty("Content-Type", "text/xml; charset=utf-8");
-        conn.setRequestProperty("SOAPAction", this.nameSpacePatientSend);
-        conn.setRequestProperty("Cookie", this.webUid);
-        OutputStream reqStream = conn.getOutputStream();
-        reqStream.write(soap.getBytes());
-    }
-    private void sendRequestCase(String soap) throws IOException {
-        URL url = new URL(wsdlUrl);
-        HttpURLConnection conn = (HttpURLConnection)url.openConnection();
-        conn.setRequestMethod("POST");
-        conn.setRequestProperty("Content-Type", "text/xml; charset=utf-8");
-        conn.setRequestProperty("SOAPAction", this.nameSpaceCaseSend);
-        conn.setRequestProperty("Cookie", this.webUid);
-        OutputStream reqStream = conn.getOutputStream();
-        reqStream.write(soap.getBytes());
     }
 
 }
